@@ -20,44 +20,48 @@ export class ScrapperService {
     const results = await page.evaluate(() => {
       const propertyList = [];
 
-      document.querySelectorAll('.genres-carousel__item').forEach((z) => {
-        let tempImgList = [];
+      document
+        .querySelectorAll('.genres-carousel__container .genres-carousel__item')
+        .forEach((z) => {
+          let tempImgList = [];
 
-        z.querySelectorAll('.genres-carousel__item').forEach((x) => {
-          if (x.querySelector('img').src)
-            tempImgList.push(x.querySelector('img').src);
+          z.querySelectorAll(
+            '.content-block-outer .products-row-outer.responsive-cards .product-cover .product-cover__cover-wrapper',
+          ).forEach((x) => {
+            if (x.querySelector('img').src)
+              tempImgList.push(x.querySelector('img').src);
+          });
+
+          const data = {
+            title: z
+              .querySelector(
+                '#catalog > div > div.content-block-outer > div > div.products-row-outer.responsive-cards > div > div:nth-child(n) > div > div.product-cover > a',
+              )
+              ?.textContent.trim(),
+            price: z
+              .querySelector(
+                '#catalog > div > div.content-block-outer > div > div.products-row-outer.responsive-cards > div > div:nth-child(n) > div > div.product-cover > div > div.price-label > div > div > span.price-val > span',
+              )
+              ?.textContent.trim(),
+            old_price: z
+              .querySelector(
+                '#catalog > div > div.content-block-outer > div > div.products-row-outer.responsive-cards > div > div:nth-child(n) > div > div.product-cover > div > div.price-label > div > div > span.price-old > span',
+              )
+              ?.textContent.trim(),
+            author: z
+              .querySelector(
+                '#catalog > div > div.content-block-outer > div > div.products-row-outer.responsive-cards > div > div:nth-child(n) > div > div.product-author > a > span',
+              )
+              ?.textContent.trim(),
+            pubhouse: z
+              .querySelector(
+                '#catalog > div > div.content-block-outer > div > div.products-row-outer.responsive-cards > div > div:nth-child(n) > div > div.product-pubhouse > a.product-pubhouse__series',
+              )
+              ?.textContent.trim(),
+            img: tempImgList,
+          };
+          propertyList.push(data);
         });
-
-        const data = {
-          title: z
-            .querySelector(
-              '#catalog > div > div.content-block-outer > div > div.products-row-outer.responsive-cards > div > div:nth-child(n) > div > div.product-cover > a',
-            )
-            ?.textContent.trim(),
-          price: z
-            .querySelector(
-              '#catalog > div > div.content-block-outer > div > div.products-row-outer.responsive-cards > div > div:nth-child(n) > div > div.product-cover > div > div.price-label > div > div > span.price-val > span',
-            )
-            ?.textContent.trim(),
-          old_price: z
-            .querySelector(
-              '#catalog > div > div.content-block-outer > div > div.products-row-outer.responsive-cards > div > div:nth-child(n) > div > div.product-cover > div > div.price-label > div > div > span.price-old > span',
-            )
-            ?.textContent.trim(),
-          author: z
-            .querySelector(
-              '#catalog > div > div.content-block-outer > div > div.products-row-outer.responsive-cards > div > div:nth-child(n) > div > div.product-author > a > span',
-            )
-            ?.textContent.trim(),
-          pubhouse: z
-            .querySelector(
-              '#catalog > div > div.content-block-outer > div > div.products-row-outer.responsive-cards > div > div:nth-child(n) > div > div.product-pubhouse > a.product-pubhouse__series',
-            )
-            ?.textContent.trim(),
-          img: tempImgList,
-        };
-        propertyList.push(data);
-      });
 
       return propertyList;
     });
