@@ -1,10 +1,12 @@
 // database.service.ts
 import { Injectable } from '@nestjs/common';
 import * as pgPromise from 'pg-promise';
+import { Pool } from 'pg';
 
 @Injectable()
 export class DatabaseService {
   private readonly db: pgPromise.IDatabase<any>;
+  private pool: Pool;
 
   constructor() {
     const pgp = pgPromise();
@@ -18,6 +20,10 @@ export class DatabaseService {
       synchronize: true,
     };
     this.db = pgp(connectionConfig);
+
+    this.pool = new Pool({
+      connectionString: 'postgres://postgre:admin@localhost:5432/booklounge',
+    });
   }
 
   async saveDataToDatabase(data: any[]) {
@@ -44,6 +50,16 @@ export class DatabaseService {
       console.log('Data saved to the database.');
     } catch (error) {
       console.error('Error saving data to the database:', error);
+    }
+  }
+
+  async query(sql: string, params: any[] = []): Promise<any> {
+    const client = await this.pool.connect();
+    try {
+      const result = await client.query(sql, params);
+      return result.rows;
+    } finally {
+      client.release();
     }
   }
 }
