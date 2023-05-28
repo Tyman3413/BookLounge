@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import * as puppeteer from 'puppeteer';
+import { DatabaseService } from 'src/database.service';
 
 @Injectable()
 export class ScrapperService {
+  constructor(private readonly databaseService: DatabaseService) {} // Инжектируйте сервис для работы с базой данных
+
   async getData(num: string = '1') {
     const URL = `https://www.labirint.ru/genres/1852/?page=${num}`;
 
@@ -59,6 +62,9 @@ export class ScrapperService {
       return propertyList;
     });
     console.log(`getData results: `, results);
+
+    await this.databaseService.saveDataToDatabase(results); // Вызовите метод сохранения данных в базе данных
+
     await browser.close();
     return results;
   }
