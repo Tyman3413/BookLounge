@@ -5,8 +5,14 @@ import { ScrapperService } from './scrapper.service';
 export class ScrapperController {
   constructor(private scrapperService: ScrapperService) {}
 
-  @Get()
-  scrapperController() {
-    return this.scrapperService.getData();
+  @Get('data')
+  async getPropertyList(): Promise<any[]> {
+    const propertyList = await this.scrapperService.getData();
+    return propertyList;
   }
+
+  // @Get()
+  // scrapperController() {
+  //   return this.scrapperService.getData();
+  // }
 }

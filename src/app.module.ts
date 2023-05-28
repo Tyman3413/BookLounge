@@ -3,8 +3,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ScrapperModule } from './scrapper/scrapper.module';
 import { TypeOrmModule } from '@nestjs/typeorm/dist';
-import { ScrapperService } from './scrapper/scrapper.service';
 import { Books } from './data.entity';
+import { DatabaseService } from './database.service';
+import { DataController } from './data.controller';
 const settings = require('../ormconfig.json');
 
 @Module({
@@ -13,7 +14,7 @@ const settings = require('../ormconfig.json');
     TypeOrmModule.forRoot(settings),
     TypeOrmModule.forFeature([Books]),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, DataController],
+  providers: [AppService, DatabaseService],
 })
 export class AppModule {}
